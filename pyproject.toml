@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mov2stack"
+version = "0.1.0"
+description = "Stack frames from a MOV/video file into one still image."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "opencv-python",
+]
+
+[project.scripts]
+mov2stack = "mov2stack:main"
+
+[tool.setuptools]
+py-modules = ["mov2stack"]
