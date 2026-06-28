@@ -87,7 +87,9 @@ def trim_frame_range(
 
     if fps <= 0.0:
         if start_seconds > 0.0 or stop_seconds is not None:
-            raise ValueError("Could not determine video FPS for --start/--stop trimming.")
+            raise ValueError(
+                "Could not determine video FPS for --start/--stop trimming."
+            )
         return 0, total_frames if total_frames > 0 else None
 
     start_frame = int(round(start_seconds * fps))
@@ -264,7 +266,10 @@ def compensate_movement(
         return frame, grayscale_float(frame, cv2, np)
 
     if motion_compensation == "phase":
-        return compensate_phase_translation(frame, reference_gray, cv2, np), reference_gray
+        return (
+            compensate_phase_translation(frame, reference_gray, cv2, np),
+            reference_gray,
+        )
 
     if motion_compensation in {"ecc", "affine"}:
         return compensate_ecc(
@@ -305,7 +310,9 @@ def estimate_frame_translation(
         blockSize=7,
     )
     if points is None or len(points) < 8:
-        dx, dy, inliers = estimate_phase_shift(previous_gray, current_gray, scale, cv2, np)
+        dx, dy, inliers = estimate_phase_shift(
+            previous_gray, current_gray, scale, cv2, np
+        )
         if abs(dx) > max_shift or abs(dy) > max_shift:
             return 0.0, 0.0, inliers
         return dx, dy, inliers
@@ -320,7 +327,9 @@ def estimate_frame_translation(
         criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 40, 0.01),
     )
     if next_points is None or status is None:
-        dx, dy, inliers = estimate_phase_shift(previous_gray, current_gray, scale, cv2, np)
+        dx, dy, inliers = estimate_phase_shift(
+            previous_gray, current_gray, scale, cv2, np
+        )
         if abs(dx) > max_shift or abs(dy) > max_shift:
             return 0.0, 0.0, inliers
         return dx, dy, inliers
@@ -328,7 +337,9 @@ def estimate_frame_translation(
     good_previous = points[status.ravel() == 1].reshape(-1, 2)
     good_current = next_points[status.ravel() == 1].reshape(-1, 2)
     if len(good_previous) < 8:
-        dx, dy, inliers = estimate_phase_shift(previous_gray, current_gray, scale, cv2, np)
+        dx, dy, inliers = estimate_phase_shift(
+            previous_gray, current_gray, scale, cv2, np
+        )
         if abs(dx) > max_shift or abs(dy) > max_shift:
             return 0.0, 0.0, inliers
         return dx, dy, inliers
@@ -926,7 +937,9 @@ def parse_args() -> argparse.Namespace:
         action="version",
         version=f"%(prog)s {__version__}",
     )
-    parser.add_argument("input", type=Path, help="Path to the input video, e.g. clip.mov")
+    parser.add_argument(
+        "input", type=Path, help="Path to the input video, e.g. clip.mov"
+    )
     parser.add_argument(
         "output",
         type=Path,

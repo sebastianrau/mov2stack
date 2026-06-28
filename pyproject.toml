@@ -13,8 +13,20 @@ dependencies = [
     "opencv-python",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.5",
+]
+
 [project.scripts]
 mov2stack = "mov2stack:main"
 
 [tool.setuptools]
 py-modules = ["mov2stack"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
