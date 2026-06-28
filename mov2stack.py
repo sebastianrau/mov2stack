@@ -532,7 +532,7 @@ def iter_processed_frames_with_masks(
         )
         return
 
-    for frame, output_size in iter_processed_frames(
+    for frame, current_output_size in iter_processed_frames(
         video,
         np,
         cv2,
@@ -548,7 +548,7 @@ def iter_processed_frames_with_masks(
         yield (
             frame,
             erode_valid_mask(valid_mask_for_frame(frame, np), cv2, np),
-            output_size,
+            current_output_size,
         )
 
 
@@ -654,6 +654,7 @@ def stack_streaming(
         max_shift,
         frame_limit,
     ):
+        output_size = current_output_size
         frame_float = frame.astype(np.float64)
         if accumulator is None:
             accumulator = frame_float
@@ -689,7 +690,7 @@ def stack_all_frames(
     """Stack frames using methods that require the whole video in memory."""
     frames = []
     output_size = size
-    for frame, output_size in iter_processed_frames(
+    for frame, current_output_size in iter_processed_frames(
         video,
         np,
         cv2,
@@ -702,6 +703,7 @@ def stack_all_frames(
         max_shift,
         frame_limit,
     ):
+        output_size = current_output_size
         frames.append(frame)
 
     stack = np.stack(frames, axis=0)
@@ -771,7 +773,7 @@ def stack_lightning_video(
     try:
         count = 0
         output_size = size
-        for frame, valid_mask, output_size in iter_processed_frames_with_masks(
+        for frame, valid_mask, current_output_size in iter_processed_frames_with_masks(
             video,
             np,
             cv2,
@@ -784,6 +786,7 @@ def stack_lightning_video(
             max_shift,
             frame_limit,
         ):
+            output_size = current_output_size
             if count % sample_stride == 0:
                 samples.append(frame)
             score = lightning_base_score(frame, np) if valid_mask.any() else -1.0
@@ -811,7 +814,7 @@ def stack_lightning_video(
     progress = ProgressBar(total_frames)
     try:
         count = 0
-        for frame, valid_mask, output_size in iter_processed_frames_with_masks(
+        for frame, valid_mask, current_output_size in iter_processed_frames_with_masks(
             video,
             np,
             cv2,
@@ -824,6 +827,7 @@ def stack_lightning_video(
             max_shift,
             frame_limit,
         ):
+            output_size = current_output_size
             frame_float = frame.astype(np.float32)
             mask, detail = lightning_detail(frame_float, cv2, np)
             mask &= valid_mask
