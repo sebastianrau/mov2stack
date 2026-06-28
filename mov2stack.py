@@ -641,7 +641,7 @@ def stack_streaming(
     accumulator: np.ndarray | None = None
 
     output_size = size
-    for frame, output_size in iter_processed_frames(
+    for frame, current_output_size in iter_processed_frames(
         video,
         np,
         cv2,
